@@ -78,8 +78,10 @@ function gameTick(delta) {
 
 /** Hypotenuese, returns distance between 2 objects */
 function hypot(one, two) {
-    let distX = one.x+(one.width/2) - two.x+(two.width/2);
-    let distY = one.y+(one.height/2) - two.y+(two.height/2);
+    // let distX = one.x+(one.width/2) - two.x+(two.width/2);
+    // let distY = one.y+(one.height/2) - two.y+(two.height/2);
+    let distX = one.x - two.x;
+    let distY = one.y - two.y;
     return [Math.sqrt(distX**2 + distY**2), distX, distY];
 }
 
