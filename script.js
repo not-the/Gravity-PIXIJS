@@ -5,11 +5,15 @@ PIXI.BaseTexture.defaultOptions.scaleMode = PIXI.SCALE_MODES.NEAREST;
 document.getElementById('game').appendChild(app.view);
 
 let mouse = {
-    x: 0,
-    y: 0,
+    s: {
+        x: 0, y: 0,
+        width: 0, height: 0,
+    },
+    mass: 1,
+    grav_law: 1.01,
 }
 
-
+var pressed = {}
 var entities = {}
 var entityID = 0;
 class Planet {
@@ -25,6 +29,9 @@ class Planet {
         this.s.endFill();
         this.s.x = x;
         this.s.y = y;
+        this.id = entityID;
+        
+        this.grav_law = 1.01;
 
         // Game
         this.mass = mass;
@@ -37,10 +44,8 @@ class Planet {
     }
 }
 
-
 // Planet 1
-new Planet();
-
+// new Planet();
 
 // Tick
 let elapsed = 0.0;
@@ -53,25 +58,48 @@ function gameTick(delta) {
 
     // Loop planets
     for(const [id, pl] of Object.entries(entities)) {
+        // Held in place
+        if(pressed['rclick'] && pl.id === entityID-1) accelerate(pl, mouse);
+
         // Loop other planets and have them pull on the current planet
-        for(const [id_influencer, pl_influencer] of Object.entries(entities)) {
-            if(id === id_influencer) continue;
-
-            // Accelerate
-            let [distance, distX, distY] = hypot(pl_influencer.s, pl.s);
-            const share = {
-                x: percentage(distX, distance)/100,
-                y: percentage(distY, distance)/100,
+        else  {
+            for(const [id_influencer, pl_influencer] of Object.entries(entities)) {
+                accelerate(pl, pl_influencer, id, id_influencer);
             }
-
-            let pull = Math.pow(1.01, distance*-1) * pl_influencer.mass;
-            pl.motion.x += pull*share.x;
-            pl.motion.y += pull*share.y;
         }
 
-        // Apply Motion
-        pl.s.x += pl.motion.x;
-        pl.s.y += pl.motion.y;
+        // Bounce off walls
+        // ...
+
+        motion(pl);
+    }
+
+    /** Apply Motion */
+    function motion(pl) {
+        pl.s.x += pl.motion.x * delta;
+        pl.s.y += pl.motion.y * delta;
+    }
+
+    /** Accelerate */
+    function accelerate(pl, pl_influencer, id=-1, id_influencer=-2) {
+        if(id === id_influencer) return;
+
+        // Accelerate
+        let [distance, distX, distY] = hypot(pl_influencer.s, pl.s);
+        if(distance === 0) {
+            distance = 0.001;
+            distX = 0.001;
+            distY = 0.001;
+        }
+        const share = {
+            x: percentage(distX, distance)/100,
+            y: percentage(distY, distance)/100,
+        }
+
+
+        let pull = Math.pow(pl_influencer.grav_law, distance*-1) * pl_influencer.mass * delta;
+        pl.motion.x += pull*share.x;
+        pl.motion.y += pull*share.y;
     }
 }
 
@@ -89,10 +117,31 @@ function percentage(partialValue, totalValue) { return (100 * partialValue) / to
 
 
 // Event Listeners
-document.addEventListener('mousemove', event => {
-    [mouse.x, mouse.y] = [event.clientX, event.clientY];
-
+const canvas = document.querySelector('canvas');
+canvas.addEventListener('mousemove', event => {
+    const rect = canvas.getBoundingClientRect();
+    [mouse.s.x, mouse.s.y] = [
+        event.clientX-rect.left / app.stage.scale.x,
+        event.clientY-rect.top / app.stage.scale.y,
+    ];
 })
-document.addEventListener('click', event => {
-    let np = new Planet(undefined, mouse.x, mouse.y, Math.ceil(Math.random() * 16777215));
+
+canvas.addEventListener('mousedown', event => {
+    pressed['rclick'] = true;
+    let np = new Planet(undefined, mouse.s.x, mouse.s.y, Math.ceil(Math.random() * 16777215));
+})
+document.addEventListener('mouseup', event => {
+    pressed['rclick'] = false;
+
+    document.getElementById('hint').classList.add('fade');
+})
+
+// Mouse wheel
+document.querySelector('canvas').addEventListener('wheel', event => {
+    event.preventDefault();
+
+    let dir = Math.sign(event.deltaY)*-1;
+    let multiplier = dir === 1 ? 1.25 : 0.8;
+    app.stage.scale.x *= multiplier;
+    app.stage.scale.y *= multiplier;
 })
