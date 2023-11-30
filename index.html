@@ -80,124 +80,128 @@
             <p id="hint">Click to spawn planets. Press space to pause or 1-5 to switch tools.</p>
         </div>
         <div class="tools container">
-            <div class="item">
-                <button id="play_pause" class="button" data-key=" ">
-                    <p>⏸</p>
-                    <div class="button_shade"></div>
-                </button>
-            </div>
-            <div class="item">
-                <div class="brush_container">
-                    <div>
-                        <div class="brush" data-brush="grab" role="button" tabindex="0" data-key="1">
-                            Grab
+            <div class="section">
+                <div class="item">
+                    <button id="play_pause" class="button" data-key=" ">
+                        <p>⏸</p>
+                        <div class="button_shade"></div>
+                    </button>
+                </div>
+                <div class="item">
+                    <div class="brush_container">
+                        <div>
+                            <div class="brush" data-brush="grab" role="button" tabindex="0" data-key="1">
+                                Grab
+                            </div>
+                            <div class="brush" data-brush="planet" role="button" tabindex="0" data-key="2">
+                                Planet
+                            </div>
+                            <div class="brush" data-brush="erase" role="button" tabindex="0" data-key="3">
+                                Erase
+                            </div>
                         </div>
-                        <div class="brush" data-brush="planet" role="button" tabindex="0" data-key="2">
-                            Planet
+                        <div>
+                            <div class="brush" data-brush="rope" role="button" tabindex="0" data-key="4">
+                                Rope
+                            </div>
+                            <div class="brush" data-brush="pin" role="button" tabindex="0" data-key="5">
+                                Pin
+                            </div>
+                            <!-- <div class="brush" data-brush="none" role="button" tabindex="0" data-key="5">
+                                ???
+                            </div> -->
                         </div>
-                        <div class="brush" data-brush="erase" role="button" tabindex="0" data-key="3">
-                            Erase
-                        </div>
-                    </div>
-                    <div>
-                        <div class="brush" data-brush="rope" role="button" tabindex="0" data-key="4">
-                            Rope
-                        </div>
-                        <div class="brush" data-brush="pin" role="button" tabindex="0" data-key="5">
-                            Pin
-                        </div>
-                        <!-- <div class="brush" data-brush="none" role="button" tabindex="0" data-key="5">
-                            ???
-                        </div> -->
                     </div>
                 </div>
             </div>
-            <div class="item">
-                <label for="game_speed">
-                    Speed:<br/>
-                    <input type="number" name="game_speed" id="game_speed" min="0.1" value="1" step="0.1" data-config>
-                </label>
-            </div>
-            <hr/>
-            <div class="item">
-                <label for="planet_size">
-                    Planet size:<br/>
-                    <input type="number" name="planet_size" id="planet_size" min="5" value="25" step="5" data-config>
-                </label>
-            </div>
-            <div class="item">
-                <label for="planetGravityMultiplier">Planet gravity:</label>
-                <input type="number" name="planetGravityMultiplier" id="planetGravityMultiplier" min="0" value="0.25" step="0.1" data-config>
-            </div>
-            <div class="item">
-                Trails:<br/>
-                <label class="switch">
-                    <input type="checkbox" id="trails" data-config checked/>
-                    <span></span>
-                    <div class="on">I</div>
-                    <div class="off">O</div>
-                </label>
-            </div>
-            <div class="item">
-                Collision:<br/>
-                <label class="switch">
-                    <input type="checkbox" id="do_planet_collision" data-config checked/>
-                    <span></span>
-                    <div class="on">I</div>
-                    <div class="off">O</div>
-                </label>
-            </div>
-            <hr/>
-            <div class="item">
-                <label for="worldGravity">World gravity:</label>
-                <input type="number" name="worldGravity" id="worldGravity" min="-1" value="0" step="0.05" data-config>
-            </div>
-            <div class="item">
-                <label for="wallBounce">Wall bounce:</label>
-                <input type="number" name="wallBounce" id="wallBounce" min="0" max="1" value="0" step="0.1" data-config>
-            </div>
-            <div class="item">
-                <label for="edgeBehavior">Screen edges:</label>
-                <select name="edgeBehavior" id="edgeBehavior" data-config>
-                    <option value="collide">Walls</option>
-                    <option value="collide_cup">Walls (no ceiling)</option>
-                    <option value="none">None</option>
-                </select>
-            </div>
-            <div class="item">
-                <label for="airFriction">Air friction:</label>
-                <input type="number" name="airFriction" id="airFriction" min="0" max="0.3" value="0" step="0.005" data-config>
-            </div>
-            <!-- <div class="item">
-                <label for="wallFriction">Wall friction:</label>
-                <input type="number" name="wallFriction" id="wallFriction" min="0" max="1" value="0" step="0.1" data-config>
-            </div> -->
-            <hr/>
-            <div class="item">
-                <label for="rope_length">Rope length:</label>
-                <input type="number" name="rope_length" id="rope_length" min="20" max="400" value="0" step="20" data-config>
-            </div>
-            <div class="item">
-                Stiff ropes:<br/>
-                <label class="switch">
-                    <input type="checkbox" id="stiff_rope" data-config checked/>
-                    <span></span>
-                    <div class="on">I</div>
-                    <div class="off">O</div>
-                </label>
-            </div>
-            <hr/>
-            <div class="item">
-                <button class="button" onclick="reset()">
-                    <p>Clear</p>
-                    <div class="button_shade"></div>
-                </button>
-            </div>
-            <div class="item">
-                <button class="button" onclick="reset()">
-                    <p>Reset config</p>
-                    <div class="button_shade"></div>
-                </button>
+            <div class="section scrollable">
+                <div class="item">
+                    <button class="button" onclick="clearScreen()">
+                        <p>Clear</p>
+                        <div class="button_shade"></div>
+                    </button>
+                </div>
+                <div class="item">
+                    <label for="game_speed">
+                        Sim speed:<br/>
+                        <input type="number" name="game_speed" id="game_speed" min="0.1" value="1" step="0.1" data-config>
+                    </label>
+                </div>
+                <hr/>
+                <div class="item">
+                    <label for="planet_size">
+                        Planet size:<br/>
+                        <input type="number" name="planet_size" id="planet_size" min="5" value="25" step="5" data-config>
+                    </label>
+                </div>
+                <div class="item">
+                    <label for="planetGravityMultiplier">Planet gravity:</label>
+                    <input type="number" name="planetGravityMultiplier" id="planetGravityMultiplier" min="0" value="0.25" step="0.1" data-config>
+                </div>
+                <div class="item">
+                    Trails:<br/>
+                    <label class="switch">
+                        <input type="checkbox" id="trails" data-config checked/>
+                        <span></span>
+                        <div class="on">I</div>
+                        <div class="off">O</div>
+                    </label>
+                </div>
+                <div class="item">
+                    Collision:<br/>
+                    <label class="switch">
+                        <input type="checkbox" id="do_planet_collision" data-config checked/>
+                        <span></span>
+                        <div class="on">I</div>
+                        <div class="off">O</div>
+                    </label>
+                </div>
+                <hr/>
+                <div class="item">
+                    <label for="worldGravity">World gravity:</label>
+                    <input type="number" name="worldGravity" id="worldGravity" min="-1" value="0" step="0.05" data-config>
+                </div>
+                <div class="item">
+                    <label for="wallBounce">Wall bounce:</label>
+                    <input type="number" name="wallBounce" id="wallBounce" min="0" max="1" value="0" step="0.1" data-config>
+                </div>
+                <div class="item">
+                    <label for="edgeBehavior">Screen edges:</label>
+                    <select name="edgeBehavior" id="edgeBehavior" data-config>
+                        <option value="collide">Walls</option>
+                        <option value="collide_cup">Walls (no ceiling)</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <div class="item">
+                    <label for="airFriction">Air friction:</label>
+                    <input type="number" name="airFriction" id="airFriction" min="0" max="0.3" value="0" step="0.005" data-config>
+                </div>
+                <!-- <div class="item">
+                    <label for="wallFriction">Wall friction:</label>
+                    <input type="number" name="wallFriction" id="wallFriction" min="0" max="1" value="0" step="0.1" data-config>
+                </div> -->
+                <hr/>
+                <div class="item">
+                    <label for="rope_length">Rope length:</label>
+                    <input type="number" name="rope_length" id="rope_length" min="20" max="400" value="0" step="20" data-config>
+                </div>
+                <div class="item">
+                    Stiff ropes:<br/>
+                    <label class="switch">
+                        <input type="checkbox" id="stiff_rope" data-config checked/>
+                        <span></span>
+                        <div class="on">I</div>
+                        <div class="off">O</div>
+                    </label>
+                </div>
+                <hr/>
+                <div class="item">
+                    <button class="button" onclick="reset()">
+                        <p>Reset config</p>
+                        <div class="button_shade"></div>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

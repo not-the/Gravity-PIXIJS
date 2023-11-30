@@ -1,3 +1,9 @@
+v3
+- Fixed clear button running the wrong function
+- Fixed crash when despawning planets
+- Trails now match planet color
+- Everything should now be mobile friendly. Extra tools now overflow into a scrollable container
+
 v2
 - Planet trails
 - World gravity

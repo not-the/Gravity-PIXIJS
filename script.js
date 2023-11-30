@@ -5,6 +5,10 @@ let app = new PIXI.Application({ resizeTo:elGame });
 app.renderer.background.color = 0x111111;
 PIXI.BaseTexture.defaultOptions.scaleMode = PIXI.SCALE_MODES.NEAREST;
 
+// const normalShader = document.getElementById("fragShader").innerHTML;
+
+var ball_normal = PIXI.BaseTexture.from('./assets/ball_normal.png');
+
 elGame.appendChild(app.view);
 
 /** Returns an angle in radians given two objects */
@@ -110,7 +114,7 @@ var entityID = 0;
 var particles = {}
 var particleID = 0;
 class Planet {
-    constructor(mass=in_planet_size.value/200, x=500, y=500, color=0xffffff) {
+    constructor(mass=in_planet_size.value/200, x=500, y=500, color=Math.ceil(Math.random() * 16777215)) {
         // Prep
         let size = mass*200; // Size and mass are the same number for now
 
@@ -121,6 +125,7 @@ class Planet {
         this.s.drawCircle(size, size, size).endFill();
         this.s.x = x;
         this.s.y = y;
+        this.color = color;
         this.s.zIndex = entityID;
         this.id = entityID;
         
@@ -180,9 +185,9 @@ class Planet {
             this.pinVisual = new PIXI.Graphics();
             this.pinVisual.beginFill(0xcccccc).drawCircle(0,0, 6, 6).endFill();
             this.pinVisual.beginFill(0xff6644).drawCircle(0,0, 5, 5).endFill();
-            this.pinVisual.x = this.s.x+this.s.width/2;
-            this.pinVisual.y = this.s.y+this.s.height/2;
-            planetContainer.addChild(this.pinVisual);
+            this.pinVisual.x = this.s.width/2;
+            this.pinVisual.y = this.s.height/2;
+            this.s.addChild(this.pinVisual);
         } else this.removePinVisual();
     }
 
@@ -273,9 +278,6 @@ class Planet {
             this.motion.x -= this.motion.x * config.airFriction * delta;
             this.motion.y -= this.motion.y * config.airFriction * delta;
         }
-        else {
-            this.pinVisual.x = this.s.x+this.s.width/2; this.pinVisual.y = this.s.y+this.s.height/2;
-        }
         if(!this.pinned || this.dragging) this.runMotion(); // Apply motion
 
         // Squash and stretch
@@ -285,8 +287,8 @@ class Planet {
 
         // Trail
         if(config.trails) {
-            let alpha = speed/200;
-            new Trail(...this.center, alpha, this.s.width/2);
+            let alpha = speed/500;
+            new Trail(...this.center, alpha, this.s.width/2, this.color);
         }
     }
 
@@ -319,8 +321,10 @@ class Planet {
         this.updateRopeVisual();
     }
     detach() {
+        if(this.roped === undefined) return;
         this.ropeVisual.parent.removeChild(this.ropeVisual);
         this.ropeVisual = undefined;
+        this.roped = undefined;
     }
 
     /** Accelerate towards another object */
@@ -344,6 +348,7 @@ class Planet {
     }
 
     removePinVisual() {
+        if(this.pinVisual === undefined) return;
         this.pinVisual.parent.removeChild(this.pinVisual);
         this.pinVisual = undefined;
     }
@@ -352,6 +357,7 @@ class Planet {
         this.s.parent.removeChild(this.s);
         delete entities[this.id];
         this.removePinVisual();
+        this.detach();
     }
 }
 class Trail {
@@ -378,8 +384,8 @@ class Trail {
 
     tick() {
         let sw = this.s.width;
-        this.s.width *= 0.95;
-        this.s.height *= 0.95;
+        this.s.width -= this.s.width * 0.02 * delta;
+        this.s.height -= this.s.height * 0.02 * delta;
         let off = (sw-this.s.width)/2;
         this.s.x += off; this.s.y += off;
         this.s.alpha -= 0.01 * delta;
@@ -392,8 +398,16 @@ class Trail {
     }
 }
 
-// Planet 1
-// new Planet();
+// Demo
+if(!store('gravity_toy_config')) {
+    let pl1 = new Planet(undefined, app.view.width/2-12, 100);
+    let pl2 = new Planet(undefined, app.view.width/2-150, 200);
+    let pl3 = new Planet(undefined, app.view.width/2-20, 350);
+    pl1.pin();
+    pl2.ropeTo(pl1);
+    pl3.ropeTo(pl2);
+}
+
 
 // Tick
 app.ticker.add(gameTick);
@@ -419,33 +433,23 @@ function reset() {
 }
 
 // Event Listeners
-// let mouseMotion = {
-//     x:0,
-//     y:0
-// }
-// function average(array) {
-//     return array.reduce((a, b) => a + b, 0) / array.length;
-// }
-// let mouseHistory = [];
-
 const canvas = document.querySelector('canvas');
-canvas.addEventListener('mousemove', event => {
+canvas.addEventListener('pointermove', pointerHandler);
+canvas.addEventListener('pointerdown', pointerHandler);
+canvas.addEventListener('pointerup', pointerHandler);
+function pointerHandler(event) {
     const rect = canvas.getBoundingClientRect();
     [mouse.s.x, mouse.s.y] = [
         event.clientX-rect.left / app.stage.scale.x,
         event.clientY-rect.top / app.stage.scale.y,
     ];
-
-    // mouseHistory.push(mouse.s);
-    // if(mouseHistory.length > 60) mouseHistory.shift();
-    // console.log(average(mouseHistory));
-})
+}
 
 canvas.addEventListener('pointerdown', event => {
     pressed['rclick'] = true;
     if(brush === 'planet' && !user.dragging) {
         let off = in_planet_size.value;
-        let np = new Planet(undefined, mouse.s.x-off, mouse.s.y-off, Math.ceil(Math.random() * 16777215));
+        let np = new Planet(undefined, mouse.s.x-off, mouse.s.y-off);
     }
 })
 document.addEventListener('pointerup', event => {
@@ -479,3 +483,10 @@ document.querySelector('canvas').addEventListener('wheel', event => {
     container.scale.x *= multiplier;
     container.scale.y *= multiplier;
 })
+var elScrTools = document.querySelector('.scrollable');
+
+elScrTools.addEventListener('wheel', event => {
+    event.preventDefault();
+    let pos = elScrTools.scrollLeft + event.deltaY;
+    elScrTools.scrollTo({left:pos, behavior:'auto'});
+});
