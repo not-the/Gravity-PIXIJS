@@ -1,22 +1,21 @@
-* {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
+.container { max-width: 100%; }
+#gravity_toy {
+    --accent-color: rgb(0, 197, 115);
+    
 }
-body {
-    background-color: black;
-    color: white;
+#game {
     font-family: Arial, Helvetica, sans-serif;
-    margin: 0;
-}
-*.container {
-    margin: 0 auto;
-    max-width: 1200px;
+    border-radius: 6px 6px 0 0;
+    overflow: hidden;
+    padding: 0;
 }
 #game {
     position: relative;
-    max-height: 100vh;
-    aspect-ratio: 1200 / 672;
+    /* height: 672px; */
+    height: 80vh;
+    width: 100%;
+    /* max-height: 100vh; */
+    /* aspect-ratio: 1200 / 672; */
 
     touch-action: manipulation;
     -webkit-user-drag: none;
@@ -28,7 +27,10 @@ canvas {
     width: 100%;
     height: 100%;
 }
-#hint {
+canvas:active {
+    cursor: grabbing !important;
+}
+#game > #hint {
     font-size: 14pt;
     color: rgb(201, 201, 201);
 
@@ -38,12 +40,122 @@ canvas {
     transform: translate(-50%, -50%);
 
     pointer-events: none;
-    transition: opacity 0.2s ease;
+    transition: 0.2s ease;
 }
-#hint.fade { opacity: 0; }
+#game > #hint.fade { opacity: 0; transform: translate(-50%, calc(-50% + 6px)); }
 .tools {
     border-radius: 0 0 6px 6px;
 
     background-color: #111111;
     padding: 12px 24px;
+    margin-top: 3px;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 }
+.tools > div.item, .tools > hr { margin-right: 18px; }
+.tools > hr {
+    height: 50px;
+    width: 1px;
+    background-color: var(--border-color);
+}
+.tools input[type="number"] { max-width: 100px; text-align: left; }
+.tools #play_pause {
+    width: 60px;
+    height: 60px;
+    margin: 0;
+    border-radius: 50%;
+    font-family: var(--body-font);
+    font-size: 26pt;
+    font-weight: 900;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tools #play_pause p { transform: translateY(-3px); }
+.tools label {
+    display: block;
+}
+
+.brush_container {
+    min-width: 200px;
+    /* max-height: 60px; */
+    border-radius: 6px;
+    overflow-y: auto;
+
+    display: flex;
+}
+.brush_container > div {
+    width: 100%;
+}
+.brush_container .brush {
+    background-color: var(--lighter-bg);
+    padding: 2px 6px;
+}
+.brush_container .brush:hover {
+    background-color: var(--lightest-bg);
+}
+.brush_container .brush.active {
+    background-color: var(--accent-color);
+    color: var(--day-text);
+    font-weight: bold;
+}
+
+
+
+
+
+
+/* Switch checkbox */
+label.switch {
+    position: relative;
+    display: inline-block;
+    width: 56px;
+    height: 32px;
+    cursor: pointer;
+    user-select: none;
+}
+label.switch:has(input:focus-visible) { outline: 2px solid white; }
+label.switch > input { opacity:0; width:0; height:0; }
+label.switch > span {
+    position: absolute;
+    top:0; left:0; right:0; bottom:0;
+    background-color: rgb(58, 58, 58);
+    border: 1px solid rgb(92, 92, 92);
+    transition: 0.1s ease-out, border-color 0.6s ease;
+    border-radius: 100px;
+}
+label.switch > span::before {
+    position: absolute;
+    content: "";
+    z-index: 2;
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 4px;
+    background-color: rgb(211, 211, 211);
+    transition: 0.35s cubic-bezier(0.075, 0.82, 0.165, 1);
+    border-radius: 50px;
+}
+label.switch:active > span::before {
+    width: 28px;
+}
+label.switch:active > input:checked + span:before { transform: translateX(20px); }
+label.switch > input:checked + span {
+    border-color: var(--accent-color);
+    background-color: var(--accent-color);
+}
+label.switch > input:checked + span:before {
+    transform: translateX(26px);
+    background-color: white;
+}
+/* On/Off labels */
+label.switch div { top: 6px; position: absolute; z-index: 1; font-weight: bold; opacity: 0; transition: 0.32s; }
+label.switch .off {  right: 11.5px; transform: translateX(12px); }
+/* label.switch:active .off { right: 9px; } */
+label.switch .on { left: 15.5px; transform: translateX(-12px); }
+/* label.switch:active .on { left: 13px; } */
+label.switch > input:not(:checked) ~ div.off,
+label.switch > input:checked ~ div.on { opacity: 1; transform: none; }

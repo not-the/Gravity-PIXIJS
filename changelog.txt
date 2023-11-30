@@ -1,0 +1,13 @@
+v2
+- Planet trails
+- World gravity
+- Edge collision
+- Wall bounciness
+- Options panel
+- localStorage remembers your config
+- Improved click-and-drag physics
+- Planets despawn when out of bounds
+- Rope and pin tools
+- Improved CSS
+
+v1
