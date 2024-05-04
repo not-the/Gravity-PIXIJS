@@ -476,6 +476,7 @@ inPlayPause.addEventListener('click', () => {
 
 // Mouse wheel
 document.querySelector('canvas').addEventListener('wheel', event => {
+    if(event.ctrlKey) return;
     event.preventDefault();
 
     let dir = Math.sign(event.deltaY)*-1;
@@ -486,7 +487,9 @@ document.querySelector('canvas').addEventListener('wheel', event => {
 var elScrTools = document.querySelector('.scrollable');
 
 elScrTools.addEventListener('wheel', event => {
+    if(event.ctrlKey) return;
     event.preventDefault();
+
     let pos = elScrTools.scrollLeft + event.deltaY;
     elScrTools.scrollTo({left:pos, behavior:'auto'});
 });
