@@ -1,3 +1,6 @@
+v4
+- Refactor code to use modules and const
+
 v3
 - Fixed clear button running the wrong function
 - Fixed crash when despawning planets

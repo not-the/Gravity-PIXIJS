@@ -51,7 +51,7 @@
             <div id="nav_list" class="flex">
                 <a href="/" class="nav_item">Home</a>
                 <!-- <a href="/#portfolio" class="nav_item" onclick="toggleMenu()">Portfolio</a> -->
-                <a href="/#projects" class="nav_item" onclick="toggleMenu()">Projects</a>
+                <a href="/projects" class="nav_item" onclick="toggleMenu()">Projects</a>
                 <!-- <a href="/#contact" class="nav_item" onclick="toggleMenu()">Contact</a> -->
                 <a href="/posts" class="nav_item">Blog</a> 
                 <a href="/about" class="nav_item">About</a> 
@@ -116,7 +116,7 @@
             </div>
             <div class="section scrollable">
                 <div class="item">
-                    <button class="button" onclick="clearScreen()">
+                    <button class="button" id="button_clear">
                         <p>Clear</p>
                         <div class="button_shade"></div>
                     </button>
@@ -197,7 +197,7 @@
                 </div>
                 <hr/>
                 <div class="item">
-                    <button class="button" onclick="reset()">
+                    <button class="button" id="button_reset">
                         <p>Reset config</p>
                         <div class="button_shade"></div>
                     </button>
@@ -213,6 +213,6 @@
     <script src="https://notkal.com/js/index.js"></script>
 
     <!-- Project -->
-    <script src="./script.js"></script>
+    <script src="./js/main.js" type="module"></script>
 </body>
 </html>
