@@ -1,6 +1,6 @@
 // DOM
 const elGame = document.getElementById('game');
-const inTrails = document.getElementById('trails');
+// const inTrails = document.getElementById('trails');
 
 // PIXI.js Setup
 const app = new PIXI.Application({ resizeTo:elGame });
@@ -14,6 +14,7 @@ elGame.appendChild(app.view);
 
 // Modules
 import Planet from "./Planet.js"
+import { hypotCenter, angleRelative } from "./util.js"
 
 
 /** Game variables & methods */
@@ -42,7 +43,23 @@ const game = {
     entities: {},
     entityID: 0,
     particles: {},
-    particleID: 0
+    particleID: 0,
+
+    ropes: {},
+    ropeID: 0,
+
+    tickRopeSprites() {
+        for(const key in this.ropes) {
+            const rope = this.ropes[key];
+
+            const distance = hypotCenter(rope.one.s, rope.two.s)[0];
+            const center = rope.one.center;
+            rope.visual.x = center[0]-3;
+            rope.visual.y = center[1]-3;
+            rope.visual.scale.y = distance;
+            rope.visual.angle = -angleRelative(rope.one.s, rope.two.s) * 180 / Math.PI + 180;
+        }
+    }
 }
 
 const config = {
@@ -140,6 +157,8 @@ function gameTick(d) {
 
     if(config.pause) return;
     for(const [id, part] of Object.entries(game.particles)) part.tick(); // Particles
+
+    game.tickRopeSprites();
 }
 
 function clearScreen() {
