@@ -27,6 +27,7 @@ export default class Planet {
         this.s.drawCircle(size, size, size).endFill();
         this.s.x = x;
         this.s.y = y;
+        this.prevPosition = { x, y };
         this.color = color;
         this.s.zIndex = game.entityID;
         this.id = game.entityID;
@@ -214,8 +215,29 @@ export default class Planet {
 
         // Trail
         if(config.trails) {
-            const alpha = speed/500;
-            new Trail(...this.center, alpha, this.s.width/2, this.color);
+            const color = this.color;
+            const size = this.s.width/2;
+            const alpha = Math.min(speed/1000, 0.02);
+            // const alpha = 0.025;
+
+            // Inbetween
+            const [dist, distX, distY] = hypot(this.s, this.prevPosition);
+
+            // Draw line between points
+            const trailResolution = 0.25;
+            const steps = Math.floor(dist*trailResolution);
+            for(let i = 0; i < steps; i++) {
+                const progress = i/steps;
+                const pos = {
+                    x: Math.ceil(this.s.x + distX * progress),
+                    y: Math.ceil(this.s.y + distY * progress)
+                }
+
+                // Create trail
+                new Trail(pos.x+(this.s.width/2), pos.y+(this.s.height/2), alpha, size, color);
+            }
+
+            new Trail(...this.center, alpha, size, color);
         }
     }
 
@@ -236,6 +258,10 @@ export default class Planet {
 
     /** Applies motion to X/Y position */
     runMotion() {
+        // Save previous position
+        this.prevPosition = { x:this.s.x, y:this.s.y };
+
+        // Update position
         this.s.x += this.motion.x * game.delta;
         this.s.y += this.motion.y * game.delta;
     }

@@ -48,20 +48,42 @@ const game = {
     ropes: {},
     ropeID: 0,
 
+    playPause() {
+        config.pause = !config.pause;
+        inPlayPause.children[0].innerText = config.pause ? '⏵' : '⏸';
+    },
+
+    /** Ticks the game once
+     * @param {Number} d Delta
+     */
+    tick(d) {
+        game.elapsed += game.delta;
+        game.delta = d * config.game_speed;
+    
+        // Loop
+        for(const [id, pl] of Object.entries(game.entities)) if(!config.pause || pl.dragging) pl.tick(); // Planets
+    
+        if(config.pause) return;
+        for(const [id, part] of Object.entries(game.particles)) part.tick(); // Particles
+    
+        game.tickRopeSprites();
+    },
+
     tickRopeSprites() {
         for(const key in this.ropes) {
             const rope = this.ropes[key];
 
             const distance = hypotCenter(rope.one.s, rope.two.s)[0];
             const center = rope.one.center;
-            rope.visual.x = center[0]-3;
-            rope.visual.y = center[1]-3;
+            rope.visual.x = center[0]+3;
+            rope.visual.y = center[1];
             rope.visual.scale.y = distance;
             rope.visual.angle = -angleRelative(rope.one.s, rope.two.s) * 180 / Math.PI + 180;
         }
     }
 }
 
+/** Game configuration */
 const config = {
     pause: false,
     game_speed: 1,
@@ -146,20 +168,7 @@ if(!store('gravity_toy_config')) {
 
 
 // Tick
-app.ticker.add(gameTick);
-function gameTick(d) {
-    game.elapsed += game.delta;
-    game.delta = d;
-    game.delta *= config.game_speed;
-
-    // Loop
-    for(const [id, pl] of Object.entries(game.entities)) if(!config.pause || pl.dragging) pl.tick(); // Planets
-
-    if(config.pause) return;
-    for(const [id, part] of Object.entries(game.particles)) part.tick(); // Particles
-
-    game.tickRopeSprites();
-}
+app.ticker.add(game.tick);
 
 function clearScreen() {
     for(const [id, pl] of Object.entries(game.entities)) pl.despawn(); // Planets
@@ -206,10 +215,7 @@ document.addEventListener('keyup', event => {
 })
 
 const inPlayPause = document.getElementById('play_pause');
-inPlayPause.addEventListener('click', () => {
-    config.pause = !config.pause;
-    inPlayPause.children[0].innerText = config.pause ? '⏵' : '⏸';
-})
+inPlayPause.addEventListener('click', () => game.playPause())
 
 
 // Mouse wheel
